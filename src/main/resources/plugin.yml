@@ -3,3 +3,9 @@ version: '1.0'
 main: me.pintoadmin.pintoPlaytime.PintoPlaytime
 api-version: '1.21'
 authors: [ PintoJ ]
+
+commands:
+    playtime:
+        description: Check your playtime or that of another player.
+        usage: /playtime [player]
+        permission: pintoPlaytime.playtime
