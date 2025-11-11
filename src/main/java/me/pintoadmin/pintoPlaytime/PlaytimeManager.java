@@ -12,7 +12,7 @@ public class PlaytimeManager {
         this.plugin = plugin;
     }
 
-    public void checkMilestones() throws SQLException {
+    public void checkMilestones(boolean ignoreMessages) throws SQLException {
         Statement statement = plugin.getSqLiteManager().getConnection().createStatement();
         ResultSet playtimes = statement.executeQuery("SELECT * FROM playtimes;");
 
@@ -29,7 +29,8 @@ public class PlaytimeManager {
                     case 'd' -> milestoneTime = milestoneValue * 86400;
                 }
 
-                if (playtime == milestoneTime) {
+                if (playtime >= milestoneTime) {
+                    if(playtime == milestoneTime) ignoreMessages = false;
                     OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(UUID.fromString(uuid));
 
                     String message = milestone.get("message")
@@ -42,17 +43,19 @@ public class PlaytimeManager {
                     }
                     String messageType = split[0];
                     String messageContent = split[1];
-                    if (messageType.equalsIgnoreCase("ALL")) {
-                        plugin.getServer().broadcastMessage(color(messageContent));
-                    } else if (messageType.equalsIgnoreCase("PLAYER")) {
-                        if (offlinePlayer.isOnline()) {
-                            Player player = offlinePlayer.getPlayer();
-                            if (player != null) {
-                                player.sendMessage(color(messageContent));
+                    if(!ignoreMessages) {
+                        if (messageType.equalsIgnoreCase("ALL")) {
+                            plugin.getServer().broadcastMessage(color(messageContent));
+                        } else if (messageType.equalsIgnoreCase("PLAYER")) {
+                            if (offlinePlayer.isOnline()) {
+                                Player player = offlinePlayer.getPlayer();
+                                if (player != null) {
+                                    player.sendMessage(color(messageContent));
+                                }
                             }
+                        } else {
+                            plugin.getLogger().warning(messageType + " is an invalid milestone message type. Valid types are 'ALL', 'PLAYER'");
                         }
-                    } else {
-                        plugin.getLogger().warning(messageType+" is an invalid milestone message type. Valid types are 'ALL', 'PLAYER'");
                     }
 
                     String permission = milestone.get("permission");

@@ -21,9 +21,7 @@ public class PlayerEvents implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         try {
-            Statement statement = plugin.getSqLiteManager().getConnection().createStatement();
-
-            statement.execute("CREATE TABLE IF NOT EXISTS playtimes (uuid TEXT PRIMARY KEY, playtime INTEGER);");
+            plugin.getPlaytimeManager().checkMilestones(true);
         } catch (SQLException e) {
             plugin.getLogger().severe("Error initializing playtime for player " + player.getName() + ": " + e.getMessage());
         }
@@ -31,7 +29,7 @@ public class PlayerEvents implements Listener {
             @Override
             public void run() {
                 try {
-                    plugin.getPlaytimeManager().checkMilestones();
+                    plugin.getPlaytimeManager().checkMilestones(true);
 
                     PreparedStatement ps = plugin.getSqLiteManager().getConnection()
                             .prepareStatement("INSERT INTO playtimes (uuid, playtime) VALUES (?, 1) " +
