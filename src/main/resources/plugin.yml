@@ -5,7 +5,21 @@ api-version: '1.21'
 authors: [ PintoJ ]
 
 commands:
-    playtime:
-        description: Check your playtime or that of another player.
-        usage: /playtime [player]
-        permission: pintoPlaytime.playtime
+  playtime:
+    description: Check your playtime or that of another player.
+    usage: /playtime [player]
+    permission: pintoPlaytime.playtime
+
+permissions:
+  pintoplaytime.playtime:
+    default: true
+    description: Permission to run the `playtime` command
+  pintoplaytime.playtime.get.self:
+    default: true
+    description: Permission to get self playtime
+  pintoplaytime.playtime.get.others:
+    default: op
+    description: Permission to get other's playtime
+  pintoplaytime.playtime.set:
+    default: op
+    description: Permission to set any player's playtime
