@@ -23,7 +23,7 @@ Milestones contains a list of 'milestones'. Format is:
 * `permission` - permission to give player when the milestone is achieved. 
 
 ### Notes
-* Until requested, the only way to have multiple permissions per milestone is to set up two milestones with the same time requirements, `message` can be blank for one, and different permissions set.
+* Until requested, the only way to have multiple permissions per milestone is to set up two milestones with the same time requirements, `message` can be blank for one, and different permissions set. Or you can just put all permissions into a group and make the permission `group.<name>`
 
 ### Errors/Bugs
 Make an issue on this project's repository
