@@ -33,7 +33,7 @@ public class PlaytimeManager {
                     if(playtime == milestoneTime) ignoreMessages = false;
                     OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(UUID.fromString(uuid));
 
-                    if(milestone.get("message") != null || milestone.get("message").isEmpty()) {
+                    if(milestone.get("message") != null && !milestone.get("message").isEmpty()) {
                         String message = milestone.get("message")
                                 .replace("{player}", offlinePlayer.getName())
                                 .replace("{time}", String.valueOf(milestoneTime));
