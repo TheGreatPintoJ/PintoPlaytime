@@ -23,7 +23,6 @@ Milestones contains a list of 'milestones'. Format is:
 * `permission` - permission to give player when the milestone is achieved. 
 
 ### Notes
-* Until requested, no luckperms support. Milestones can give players permissions and although it doesn't show in any permissions manager, they DO have the correct permission per milestone.
 * Until requested, the only way to have multiple permissions per milestone is to set up two milestones with the same time requirements, `message` can be blank for one, and different permissions set.
 
 ### Errors/Bugs
