@@ -33,28 +33,30 @@ public class PlaytimeManager {
                     if(playtime == milestoneTime) ignoreMessages = false;
                     OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(UUID.fromString(uuid));
 
-                    String message = milestone.get("message")
-                            .replace("{player}", offlinePlayer.getName())
-                            .replace("{time}", String.valueOf(milestoneTime));
-                    String[] split = message.split(":");
-                    if (split.length != 2){
-                        plugin.getLogger().warning(split[0]+" is an invalid milestone message type. Valid types are 'ALL', 'PLAYER'");
-                        continue;
-                    }
-                    String messageType = split[0];
-                    String messageContent = split[1];
-                    if(!ignoreMessages) {
-                        if (messageType.equalsIgnoreCase("ALL")) {
-                            plugin.getServer().broadcastMessage(color(messageContent));
-                        } else if (messageType.equalsIgnoreCase("PLAYER")) {
-                            if (offlinePlayer.isOnline()) {
-                                Player player = offlinePlayer.getPlayer();
-                                if (player != null) {
-                                    player.sendMessage(color(messageContent));
+                    if(milestone.get("message") != null || milestone.get("message").isEmpty()) {
+                        String message = milestone.get("message")
+                                .replace("{player}", offlinePlayer.getName())
+                                .replace("{time}", String.valueOf(milestoneTime));
+                        String[] split = message.split(":");
+                        if (split.length != 2) {
+                            plugin.getLogger().warning(split[0] + " is an invalid milestone message type. Valid types are 'ALL', 'PLAYER'");
+                            continue;
+                        }
+                        String messageType = split[0];
+                        String messageContent = split[1];
+                        if (!ignoreMessages) {
+                            if (messageType.equalsIgnoreCase("ALL")) {
+                                plugin.getServer().broadcastMessage(color(messageContent));
+                            } else if (messageType.equalsIgnoreCase("PLAYER")) {
+                                if (offlinePlayer.isOnline()) {
+                                    Player player = offlinePlayer.getPlayer();
+                                    if (player != null) {
+                                        player.sendMessage(color(messageContent));
+                                    }
                                 }
+                            } else {
+                                plugin.getLogger().warning(messageType + " is an invalid milestone message type. Valid types are 'ALL', 'PLAYER'");
                             }
-                        } else {
-                            plugin.getLogger().warning(messageType + " is an invalid milestone message type. Valid types are 'ALL', 'PLAYER'");
                         }
                     }
 
