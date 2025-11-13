@@ -1,5 +1,5 @@
 name: PintoPlaytime
-version: '1.1'
+version: '1.2'
 main: me.pintoadmin.pintoPlaytime.PintoPlaytime
 api-version: '1.21'
 authors: [ PintoJ ]
