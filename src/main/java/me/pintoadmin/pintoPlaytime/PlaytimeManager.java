@@ -1,5 +1,9 @@
 package me.pintoadmin.pintoPlaytime;
 
+import net.luckperms.api.*;
+import net.luckperms.api.model.user.*;
+import net.luckperms.api.node.*;
+import net.luckperms.api.node.types.*;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 
@@ -62,10 +66,22 @@ public class PlaytimeManager {
 
                     String permission = milestone.get("permission");
                     if (permission != null && !permission.isEmpty()) {
-                        if (offlinePlayer.isOnline()) {
-                            Player player = offlinePlayer.getPlayer();
-                            if (player != null && !player.hasPermission(permission)) {
-                                player.addAttachment(plugin, permission, true);
+                        if(plugin.getLuckPermsApi() != null){
+                            LuckPerms api = plugin.getLuckPermsApi();
+                            Node permissionNode = Node.builder(permission).value(true).build();
+                            User user = api.getUserManager().getUser(UUID.fromString(uuid));
+                            if(user != null){
+                                if(!user.getNodes().contains(permissionNode)) {
+                                    user.data().add(permissionNode);
+                                    api.getUserManager().saveUser(user);
+                                }
+                            }
+                        } else {
+                            if (offlinePlayer.isOnline()) {
+                                Player player = offlinePlayer.getPlayer();
+                                if (player != null && !player.hasPermission(permission)) {
+                                    player.addAttachment(plugin, permission, true);
+                                }
                             }
                         }
                     }
