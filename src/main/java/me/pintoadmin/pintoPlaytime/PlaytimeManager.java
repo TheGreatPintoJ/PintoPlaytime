@@ -3,8 +3,8 @@ package me.pintoadmin.pintoPlaytime;
 import net.luckperms.api.*;
 import net.luckperms.api.model.user.*;
 import net.luckperms.api.node.*;
-import net.luckperms.api.node.types.*;
 import org.bukkit.*;
+import org.bukkit.command.*;
 import org.bukkit.entity.*;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ public class PlaytimeManager {
         this.plugin = plugin;
     }
 
-    public void checkMilestones(boolean ignoreMessages) throws SQLException {
+    public void checkMilestones() throws SQLException {
         Statement statement = plugin.getSqLiteManager().getConnection().createStatement();
         ResultSet playtimes = statement.executeQuery("SELECT * FROM playtimes;");
 
@@ -34,21 +34,21 @@ public class PlaytimeManager {
                 }
 
                 if (playtime >= milestoneTime) {
-                    if(playtime == milestoneTime) ignoreMessages = false;
                     OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(UUID.fromString(uuid));
 
-                    if(milestone.get("message") != null && !milestone.get("message").isEmpty()) {
-                        String message = milestone.get("message")
-                                .replace("{player}", offlinePlayer.getName())
-                                .replace("{time}", String.valueOf(milestoneTime));
-                        String[] split = message.split(":");
-                        if (split.length != 2) {
-                            plugin.getLogger().warning(split[0] + " is an invalid milestone message type. Valid types are 'ALL', 'PLAYER'");
-                            continue;
-                        }
-                        String messageType = split[0];
-                        String messageContent = split[1];
-                        if (!ignoreMessages) {
+                    if(playtime == milestoneTime) {
+
+                        if (milestone.get("message") != null && !milestone.get("message").isEmpty()) {
+                            String message = milestone.get("message")
+                                    .replace("{player}", offlinePlayer.getPlayer().getName())
+                                    .replace("{time}", String.valueOf(milestoneTime));
+                            String[] split = message.split(":");
+                            if (split.length != 2) {
+                                plugin.getLogger().warning(split[0] + " is an invalid milestone message type. Valid types are 'ALL', 'PLAYER'");
+                                continue;
+                            }
+                            String messageType = split[0];
+                            String messageContent = split[1];
                             if (messageType.equalsIgnoreCase("ALL")) {
                                 plugin.getServer().broadcastMessage(color(messageContent));
                             } else if (messageType.equalsIgnoreCase("PLAYER")) {
@@ -61,6 +61,20 @@ public class PlaytimeManager {
                             } else {
                                 plugin.getLogger().warning(messageType + " is an invalid milestone message type. Valid types are 'ALL', 'PLAYER'");
                             }
+
+                        }
+                        String command;
+                        if(milestone.containsKey("command")){
+                            command = milestone.get("command")
+                                    .replace("{player}", offlinePlayer.getPlayer().getName())
+                                    .replace("{time}", String.valueOf(milestoneTime));
+                        } else {
+                            command = "";
+                        }
+                        if (!command.isEmpty()) {
+                            Bukkit.getScheduler().runTask(plugin, () -> {
+                                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
+                            });
                         }
                     }
 
