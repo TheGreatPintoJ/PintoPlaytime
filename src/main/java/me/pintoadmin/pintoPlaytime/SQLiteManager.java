@@ -30,6 +30,7 @@ public class SQLiteManager {
         }
     }
     public void deinit(){
+        if(connection == null) return;
         try {
             connection.close();
         } catch (SQLException e) {
