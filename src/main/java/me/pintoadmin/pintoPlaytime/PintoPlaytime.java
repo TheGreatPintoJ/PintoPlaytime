@@ -8,15 +8,19 @@ public final class PintoPlaytime extends JavaPlugin {
     private final SQLiteManager sqLiteManager = new SQLiteManager(this);
     private final ConfigLoader configLoader = new ConfigLoader(this);
     private final PlaytimeManager playtimeManager = new PlaytimeManager(this);
+    private final PlayerEvents playerEvents = new PlayerEvents(this);
 
     @Override
     public void onEnable() {
-        getPluginManager().registerEvents(new PlayerEvents(this), this);
+        getPluginManager().registerEvents(playerEvents, this);
         new PlaytimeCommand(this);
     }
 
     @Override
-    public void onDisable() {}
+    public void onDisable() {
+        playerEvents.stopTasks();
+        sqLiteManager.deinit();
+    }
 
     public SQLiteManager getSqLiteManager() {
         return sqLiteManager;

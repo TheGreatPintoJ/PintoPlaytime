@@ -54,4 +54,12 @@ public class PlayerEvents implements Listener {
             playtimeTask.cancel();
         }
     }
+
+    public void stopTasks(){
+        for(Map.Entry<Player, BukkitRunnable> entry : playtimeTasks.entrySet()){
+            BukkitRunnable runnable = entry.getValue();
+            runnable.cancel();
+        }
+        playtimeTasks.clear();
+    }
 }

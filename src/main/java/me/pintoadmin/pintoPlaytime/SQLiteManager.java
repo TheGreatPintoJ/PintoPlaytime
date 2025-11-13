@@ -29,6 +29,13 @@ public class SQLiteManager {
             plugin.getLogger().severe("Error connecting to SQLite: " + e.getMessage());
         }
     }
+    public void deinit(){
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Error closing SQLite connection: " + e.getMessage());
+        }
+    }
     public Connection getConnection(){
         if (connection == null) {
             init();
