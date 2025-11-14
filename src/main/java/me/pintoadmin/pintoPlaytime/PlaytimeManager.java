@@ -34,7 +34,6 @@ public class PlaytimeManager {
                     OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(UUID.fromString(uuid));
 
                     if(playtime == milestoneTime) {
-
                         if (milestone.get("message") != null && !milestone.get("message").isEmpty()) {
                             String message = milestone.get("message")
                                     .replace("{player}", offlinePlayer.getPlayer().getName())
@@ -127,11 +126,7 @@ public class PlaytimeManager {
 
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
-                int playtime = rs.getInt("playtime");
-                int hours = playtime / 3600;
-                int minutes = (playtime % 3600) / 60;
-                int seconds = playtime % 60;
-                return hours + "h " + minutes + "m" + (seconds > 0 ? " " + seconds + "s" : "");
+                return formatTime(rs.getInt("playtime"));
             } else {
                 return "0h 0m";
             }
@@ -140,7 +135,30 @@ public class PlaytimeManager {
             return null;
         }
     }
+    public Map<String, String> getTopPlaytimes(){
+        Map<String, String> finalMap = new HashMap<>();
 
+        try {
+            Connection conn = plugin.getSqLiteManager().getConnection();
+
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM playtimes");
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                finalMap.put(rs.getString("uuid"), formatTime(rs.getInt("playtime")));
+            }
+        } catch (SQLException e){
+            plugin.getLogger().severe("Error getting top playtimes");
+        }
+
+        return finalMap;
+    }
+
+    private String formatTime(int number){
+        int hours = number / 3600;
+        int minutes = (number % 3600) / 60;
+        int seconds = number % 60;
+        return hours + "h " + minutes + "m" + (seconds > 0 ? " " + seconds + "s" : "");
+    }
     private String color(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
     }

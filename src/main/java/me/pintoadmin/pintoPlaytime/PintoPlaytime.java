@@ -29,14 +29,15 @@ public final class PintoPlaytime extends JavaPlugin {
         if(luckpermsInstalled){
             luckPermsHook = new LuckPermsHook(this);
         }
-
         getPluginManager().registerEvents(playerEvents, this);
         new PlaytimeCommand(this);
+        new PlaytimeTopCommand(this);
     }
 
     @Override
     public void onDisable() {
-        playerEvents.stopTasks();
+        if(playerEvents != null)
+            playerEvents.stopTasks();
         sqLiteManager.deinit();
     }
 

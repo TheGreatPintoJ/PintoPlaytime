@@ -1,3 +1,4 @@
+#file: noinspection SpellCheckingInspection
 name: PintoPlaytime
 version: '1.2'
 main: me.pintoadmin.pintoPlaytime.PintoPlaytime
@@ -11,6 +12,12 @@ commands:
     description: Check your playtime or that of another player.
     usage: /playtime [player]
     permission: pintoPlaytime.playtime
+    aliases: [pt]
+  playtimetop:
+    description: Show top ten playtimes of player who have joined the server
+    usage: /playtimetop
+    permission: pintplaytime.top
+    aliases: [playtop, ptt]
 
 permissions:
   pintoplaytime.playtime:
@@ -25,3 +32,6 @@ permissions:
   pintoplaytime.playtime.set:
     default: op
     description: Permission to set any player's playtime
+  pintoplaytime.top:
+    default: true
+    description: Permission to use the `playtimetop` command
