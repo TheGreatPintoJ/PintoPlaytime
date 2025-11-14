@@ -20,16 +20,12 @@ public class PlayerEvents implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        try {
-            plugin.getPlaytimeManager().checkMilestones(true);
-        } catch (SQLException e) {
-            plugin.getLogger().severe("Error initializing playtime for player " + player.getName() + ": " + e.getMessage());
-        }
+
         BukkitRunnable playtimeTask = new BukkitRunnable() {
             @Override
             public void run() {
                 try {
-                    plugin.getPlaytimeManager().checkMilestones(true);
+                    plugin.getPlaytimeManager().checkMilestones();
 
                     PreparedStatement ps = plugin.getSqLiteManager().getConnection()
                             .prepareStatement("INSERT INTO playtimes (uuid, playtime) VALUES (?, 1) " +

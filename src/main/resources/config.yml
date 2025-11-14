@@ -5,6 +5,7 @@ milestones:
   - time: "6h"
     message: "ALL:&6{player} has a reached playtime of 6 hours!"
     permission: "minecraft.dummy.permission"
+    command: "give {player} minecraft:diamond 1"
   - time: "12h"
     message: "ALL:&6{player} has a reached playtime of 12 hours!"
     permission: "minecraft.dummy.permission"

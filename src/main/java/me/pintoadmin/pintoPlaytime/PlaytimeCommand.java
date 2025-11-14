@@ -16,7 +16,10 @@ public class PlaytimeCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!sender.hasPermission("pintoplaytime.playtime")) return true;
         if(args.length == 0 && sender instanceof Player player) {
-            if(!sender.hasPermission("pintoplaytime.playtime.get.self")) return true;
+            if(!sender.hasPermission("pintoplaytime.playtime.get.self")) {
+                sender.sendMessage(ChatColor.RED+"You do not have permission to use this command.");
+                return true;
+            }
             String playtime = plugin.getPlaytimeManager().getPlaytime(player.getName());
             sender.sendMessage(ChatColor.GOLD+"You have " + playtime + " playtime.");
             return true;
