@@ -22,8 +22,8 @@ public class PlaytimeManager {
             int playtime = playtimes.getInt("playtime");
             for (var milestone : plugin.getConfigLoader().getMilestones()) {
                 int milestoneTime = 0;
-                char milestoneUnit = milestone.get("time").charAt(milestone.get("time").length() - 1);
-                int milestoneValue = Integer.parseInt(milestone.get("time").substring(0, milestone.get("time").length() - 1));
+                char milestoneUnit = milestone.get("time").getFirst().charAt(milestone.get("time").getFirst().length() - 1);
+                int milestoneValue = Integer.parseInt(milestone.get("time").getFirst().substring(0, milestone.get("time").getFirst().length() - 1));
                 switch (milestoneUnit) {
                     case 'm' -> milestoneTime = milestoneValue * 60;
                     case 'h' -> milestoneTime = milestoneValue * 3600;
@@ -33,57 +33,60 @@ public class PlaytimeManager {
                 if (playtime >= milestoneTime) {
                     OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(UUID.fromString(uuid));
 
-                    if(playtime == milestoneTime) {
-                        if (milestone.get("message") != null && !milestone.get("message").isEmpty()) {
-                            String message = milestone.get("message")
-                                    .replace("{player}", offlinePlayer.getPlayer().getName())
-                                    .replace("{time}", String.valueOf(milestoneTime));
-                            String[] split = message.split(":");
-                            if (split.length != 2) {
-                                plugin.getLogger().warning(split[0] + " is an invalid milestone message type. Valid types are 'ALL', 'PLAYER'");
-                                continue;
-                            }
-                            String messageType = split[0];
-                            String messageContent = split[1];
-                            if (messageType.equalsIgnoreCase("ALL")) {
-                                plugin.getServer().broadcastMessage(color(messageContent));
-                            } else if (messageType.equalsIgnoreCase("PLAYER")) {
-                                if (offlinePlayer.isOnline()) {
-                                    Player player = offlinePlayer.getPlayer();
-                                    if (player != null) {
-                                        player.sendMessage(color(messageContent));
-                                    }
+                    if (playtime == milestoneTime) {
+                        if (milestone.get("messages") != null && !milestone.get("messages").isEmpty()) {
+                            for (String entry : milestone.get("messages")) {
+                                String message = entry
+                                        .replace("{player}", offlinePlayer.getPlayer().getName())
+                                        .replace("{time}", String.valueOf(milestoneTime));
+                                String[] split = message.split(":");
+                                if (split.length != 2) {
+                                    plugin.getLogger().warning(split[0] + " is an invalid milestone message type. Valid types are 'ALL', 'PLAYER'");
+                                    continue;
                                 }
-                            } else {
-                                plugin.getLogger().warning(messageType + " is an invalid milestone message type. Valid types are 'ALL', 'PLAYER'");
+                                String messageType = split[0];
+                                String messageContent = split[1];
+                                if (messageType.equalsIgnoreCase("ALL")) {
+                                    plugin.getServer().broadcastMessage(color(messageContent));
+                                } else if (messageType.equalsIgnoreCase("PLAYER")) {
+                                    if (offlinePlayer.isOnline()) {
+                                        Player player = offlinePlayer.getPlayer();
+                                        if (player != null) {
+                                            player.sendMessage(color(messageContent));
+                                        }
+                                    }
+                                } else {
+                                    plugin.getLogger().warning(messageType + " is an invalid milestone message type. Valid types are 'ALL', 'PLAYER'");
+                                }
                             }
-
                         }
-                        String command;
-                        if(milestone.containsKey("command")){
-                            command = milestone.get("command")
-                                    .replace("{player}", offlinePlayer.getPlayer().getName())
-                                    .replace("{time}", String.valueOf(milestoneTime));
-                        } else {
-                            command = "";
-                        }
-                        if (!command.isEmpty()) {
-                            Bukkit.getScheduler().runTask(plugin, () -> {
-                                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
-                            });
+                        if (milestone.containsKey("commands")) {
+                            for (String entry : milestone.get("commands")) {
+                                String command = entry
+                                        .replace("{player}", offlinePlayer.getPlayer().getName())
+                                        .replace("{time}", String.valueOf(milestoneTime));
+                                if (!command.isEmpty()) {
+                                    Bukkit.getScheduler().runTask(plugin, () -> {
+                                        plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command);
+                                    });
+                                }
+                            }
                         }
                     }
 
-                    String permission = milestone.get("permission");
-                    if (permission != null && !permission.isEmpty()) {
-                        if(plugin.getLuckPermsInstalled()){
-                            LuckPermsHook hook = plugin.getLuckPermsHook();
-                            hook.givePermission(UUID.fromString(uuid), permission);
-                        } else {
-                            if (offlinePlayer.isOnline()) {
-                                Player player = offlinePlayer.getPlayer();
-                                if (player != null && !player.hasPermission(permission)) {
-                                    player.addAttachment(plugin, permission, true);
+                    if (milestone.containsKey("permissions")) {
+                        for (String entry : milestone.get("permissions")) {
+                            if (entry != null && !entry.isEmpty()) {
+                                if (plugin.getLuckPermsInstalled()) {
+                                    LuckPermsHook hook = plugin.getLuckPermsHook();
+                                    hook.givePermission(UUID.fromString(uuid), entry);
+                                } else {
+                                    if (offlinePlayer.isOnline()) {
+                                        Player player = offlinePlayer.getPlayer();
+                                        if (player != null && !player.hasPermission(entry)) {
+                                            player.addAttachment(plugin, entry, true);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -134,6 +137,24 @@ public class PlaytimeManager {
             plugin.getLogger().severe("Error getting playtime for player " + playerName + ": " + e.getMessage());
             return null;
         }
+    }
+    public int getJoins(String playerName){
+        OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(playerName);
+
+        try {
+            PreparedStatement ps = plugin.getSqLiteManager().getConnection()
+                    .prepareStatement("SELECT timesjoined FROM playtimes WHERE uuid = ?");
+            ps.setString(1, offlinePlayer.getUniqueId().toString());
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return rs.getInt("timesjoined");
+            } else {
+                return 0;
+            }
+        } catch (SQLException e){
+            plugin.getLogger().severe("Error getting timesjoined for player " + playerName + ": " + e.getMessage());
+        }
+        return 0;
     }
     public Map<String, String> getTopPlaytimes(){
         Map<String, String> finalMap = new HashMap<>();

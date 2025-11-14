@@ -31,8 +31,12 @@ public class PlaytimeTopCommand implements CommandExecutor {
         for(Map.Entry<String, String> entry : playtimeTops.entrySet()) {
             if(index == 9) break;
             OfflinePlayer player = plugin.getServer().getOfflinePlayer(UUID.fromString(entry.getKey()));
+            if(plugin.getConfigLoader().getExclusions().contains(player.getName())) continue;
             sender.sendMessage(ChatColor.GOLD+""+index+". "+ChatColor.AQUA+player.getName()+": "+ChatColor.YELLOW+entry.getValue());
             index++;
+        }
+        if(index == 0){
+            sender.sendMessage(ChatColor.RED+"No top playtime data available.");
         }
         return true;
     }

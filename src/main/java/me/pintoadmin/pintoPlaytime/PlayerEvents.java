@@ -21,6 +21,19 @@ public class PlayerEvents implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
+        try {
+            Connection conn = plugin.getSqLiteManager().getConnection();
+            PreparedStatement ps = conn.prepareStatement(
+                    "INSERT INTO playtimes (uuid, playtime, timesjoined) " +
+                            "VALUES (?, 0, 1) " +
+                            "ON CONFLICT(uuid) DO UPDATE SET timesjoined = timesjoined + 1"
+            );
+            ps.setString(1, player.getUniqueId().toString());
+            ps.executeUpdate();
+        } catch (SQLException e){
+            plugin.getLogger().severe("An error occured while saving player data: "+e.getMessage());
+        }
+
         BukkitRunnable playtimeTask = new BukkitRunnable() {
             @Override
             public void run() {
@@ -28,8 +41,7 @@ public class PlayerEvents implements Listener {
                     plugin.getPlaytimeManager().checkMilestones();
 
                     PreparedStatement ps = plugin.getSqLiteManager().getConnection()
-                            .prepareStatement("INSERT INTO playtimes (uuid, playtime) VALUES (?, 1) " +
-                                    "ON CONFLICT(uuid) DO UPDATE SET playtime = playtime + 1;");
+                            .prepareStatement("UPDATE playtimes SET playtime = playtime + 1 WHERE uuid = ?;");
                     ps.setString(1, player.getUniqueId().toString());
                     ps.executeUpdate();
                 } catch (SQLException e) {
