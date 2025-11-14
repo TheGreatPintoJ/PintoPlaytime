@@ -138,6 +138,24 @@ public class PlaytimeManager {
             return null;
         }
     }
+    public int getJoins(String playerName){
+        OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(playerName);
+
+        try {
+            PreparedStatement ps = plugin.getSqLiteManager().getConnection()
+                    .prepareStatement("SELECT timesjoined FROM playtimes WHERE uuid = ?");
+            ps.setString(1, offlinePlayer.getUniqueId().toString());
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return rs.getInt("timesjoined");
+            } else {
+                return 0;
+            }
+        } catch (SQLException e){
+            plugin.getLogger().severe("Error getting timesjoined for player " + playerName + ": " + e.getMessage());
+        }
+        return 0;
+    }
     public Map<String, String> getTopPlaytimes(){
         Map<String, String> finalMap = new HashMap<>();
 

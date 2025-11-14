@@ -21,7 +21,8 @@ public class PlaytimeCommand implements CommandExecutor {
                 return true;
             }
             String playtime = plugin.getPlaytimeManager().getPlaytime(player.getName());
-            sender.sendMessage(ChatColor.GOLD+"You have " + playtime + " playtime.");
+            int joins = plugin.getPlaytimeManager().getJoins(player.getName());
+            sender.sendMessage(ChatColor.AQUA+"You have "+ChatColor.GOLD+ playtime +ChatColor.AQUA+" playtime and have joined "+ChatColor.YELLOW+joins+" times");
             return true;
         } else if(args.length == 1) {
             if(!sender.hasPermission("pintoplaytime.playtime.get.other")) return true;
