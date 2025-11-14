@@ -12,11 +12,13 @@ A simple spigot plugin to track playtime for players
 ### Commands
 * `/playtime <player> # Get's specified player's playtime and join count (works offline if player has joined previously)`
 * `/playtime <player> <time> # Set's specified player's playtime to specified value (format as X[unit] - e.g. 5h)`
+* `/playtimetop # Shows top ten playtimes`
 
 ### Permissions
 * `pintoplaytime.playtime.get.self # Allows player to view their own playtime`
 * `pintoplaytime.playtime.get.others # Allows player to view other player's playtime`
 * `pintoplaytime.playtime.set # Allows player to set any player's playtime`
+* `pintoplaytime.top # Allows player to view top ten playtimes`
 
 ### Config
 Milestones contains a list of 'milestones'. Format is:
