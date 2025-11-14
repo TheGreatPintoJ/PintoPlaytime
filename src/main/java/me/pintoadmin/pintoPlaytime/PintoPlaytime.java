@@ -8,16 +8,26 @@ import static org.bukkit.Bukkit.getPluginManager;
 public final class PintoPlaytime extends JavaPlugin {
     private final SQLiteManager sqLiteManager = new SQLiteManager(this);
     private final ConfigLoader configLoader = new ConfigLoader(this);
-    private final PlaytimeManager playtimeManager = new PlaytimeManager(this);
-    private final PlayerEvents playerEvents = new PlayerEvents(this);
+    private PlaytimeManager playtimeManager = new PlaytimeManager(this);;
+    private PlayerEvents playerEvents = new PlayerEvents(this);
+    private LuckPermsHook luckPermsHook;
 
-    private LuckPerms luckPermsApi = null;
+    private boolean luckpermsInstalled = false;
+
+    @Override
+    public void onLoad(){
+        if(getServer().getPluginManager().getPlugin("LuckPerms") != null){
+            luckpermsInstalled = true;
+            getLogger().info("LuckPerms detected!");
+        } else {
+            getLogger().info("LuckPerms not installed! Use LuckPerms for better integration.");
+        }
+    }
 
     @Override
     public void onEnable() {
-        if(LuckPermsProvider.get() != null){
-            getLogger().info("LuckPerms detected! Integrating...");
-            luckPermsApi = LuckPermsProvider.get();
+        if(luckpermsInstalled){
+            luckPermsHook = new LuckPermsHook(this);
         }
 
         getPluginManager().registerEvents(playerEvents, this);
@@ -39,8 +49,11 @@ public final class PintoPlaytime extends JavaPlugin {
     public PlaytimeManager getPlaytimeManager() {
         return playtimeManager;
     }
+    public LuckPermsHook getLuckPermsHook(){
+        return luckPermsHook;
+    }
 
-    public LuckPerms getLuckPermsApi() {
-        return luckPermsApi;
+    public boolean getLuckPermsInstalled() {
+        return luckpermsInstalled;
     }
 }
