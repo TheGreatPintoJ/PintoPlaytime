@@ -8,13 +8,15 @@ A simple spigot plugin to track playtime for players
 * Give permissions and announce when a player gets a playtime milestone
 
 ### Commands
-* `/playtime <player> # Get's specified player's playtime (works offline if player has joined previously)`
+* `/playtime <player> # Gets specified player's playtime (works offline if player has joined previously)`
 * `/playtime <player> <time> # Set's specified player's playtime to specified value (format as X[unit] - e.g. 5h)`
+* `/playtimetop # Shows top ten playtimes`
 
 ### Permissions
 * `pintoplaytime.playtime.get.self # Allows player to view their own playtime`
 * `pintoplaytime.playtime.get.others # Allows player to view other player's playtime`
 * `pintoplaytime.playtime.set # Allows player to set any player's playtime`
+* `pintoplaytime.top # Allows player to view top ten playtimes`
 
 ### Config
 Milestones contains a list of 'milestones'. Format is:
@@ -23,7 +25,7 @@ Milestones contains a list of 'milestones'. Format is:
 * `permission` - permission to give player when the milestone is achieved. 
 
 ### Notes
-* Until requested, the only way to have multiple permissions per milestone is to set up two milestones with the same time requirements, `message` can be blank for one, and different permissions set. Or you can just put all permissions into a group and make the permission `group.<name>`
+* Until requested, the only way to have multiple permissions per milestone is to set up two milestones with the same time requirements, `message` can be blank for one, and different permissions set. Or you can just put all permissions into a group and make the permission `group.<name>` (LuckPerms only)
 
 ### Errors/Bugs
 Make an issue on this project's repository
