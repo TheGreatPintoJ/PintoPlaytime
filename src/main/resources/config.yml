@@ -1,3 +1,9 @@
+playtop_exclude: # List of players excluded from appearing in the playtime top list
+  - Notch
+  - Herobrine
+  - Steve
+  - Alex
+
 milestones:
   - time: "3h"
     message: "ALL:&6{player} has a reached playtime of 3 hours!"
