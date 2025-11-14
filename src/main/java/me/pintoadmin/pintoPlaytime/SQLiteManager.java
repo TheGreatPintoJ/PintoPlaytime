@@ -19,8 +19,26 @@ public class SQLiteManager {
             // Establish a connection to the database (creates a new file if it doesn't exist)
             String url = "jdbc:sqlite:%s/playtimes.db".formatted(plugin.getDataFolder().getAbsolutePath());
             connection = DriverManager.getConnection(url);
+
             PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS playtimes (uuid TEXT PRIMARY KEY, playtime INTEGER);");
             ps.execute();
+
+            Statement statement = connection.createStatement();
+            boolean columnExists = false;
+            ResultSet rs = statement.executeQuery("PRAGMA table_info(playtimes);");
+            while (rs.next()) {
+                if (rs.getString("name").equalsIgnoreCase("timesjoined")) {
+                    columnExists = true;
+                    break;
+                }
+            }
+            rs.close();
+
+            if(!columnExists) {
+                PreparedStatement tablePS = connection.prepareStatement("ALTER TABLE playtimes ADD COLUMN timesjoined INTEGER;");
+                tablePS.execute();
+            }
+
             plugin.getLogger().info("Connection to SQLite established.");
 
         } catch (ClassNotFoundException e) {
