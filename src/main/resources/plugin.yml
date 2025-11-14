@@ -1,6 +1,6 @@
 #file: noinspection SpellCheckingInspection
 name: PintoPlaytime
-version: '1.3'
+version: '1.4'
 main: me.pintoadmin.pintoPlaytime.PintoPlaytime
 api-version: '1.21'
 authors: [ PintoJ ]
