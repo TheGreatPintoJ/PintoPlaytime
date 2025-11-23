@@ -156,22 +156,18 @@ public class PlaytimeManager {
         }
         return 0;
     }
-    public Map<String, String> getTopPlaytimes(){
+    public ResultSet getTopPlaytimes(){
         Map<String, String> finalMap = new HashMap<>();
 
         try {
             Connection conn = plugin.getSqLiteManager().getConnection();
 
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM playtimes ORDER BY playtime DESC;");
-            ResultSet rs = ps.executeQuery();
-            while(rs.next()){
-                finalMap.put(rs.getString("uuid"), formatTime(rs.getInt("playtime")));
-            }
+            return ps.executeQuery();
         } catch (SQLException e){
             plugin.getLogger().severe("Error getting top playtimes");
         }
-
-        return finalMap;
+        return null;
     }
 
     private String formatTime(int number){

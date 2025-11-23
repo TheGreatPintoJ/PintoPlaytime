@@ -7,6 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.*;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,19 +26,28 @@ public class PlaytimeTopCommand implements CommandExecutor {
             return true;
         }
         sender.sendMessage(ChatColor.AQUA+"Current top playtimes:");
-
-        Map<String, String> playtimeTops = plugin.getPlaytimeManager().getTopPlaytimes();
         int index = 0;
-        for(Map.Entry<String, String> entry : playtimeTops.entrySet()) {
-            if(index == 9) break;
-            OfflinePlayer player = plugin.getServer().getOfflinePlayer(UUID.fromString(entry.getKey()));
-            if(plugin.getConfigLoader().getExclusions().contains(player.getName())) continue;
-            sender.sendMessage(ChatColor.GOLD+""+index+". "+ChatColor.AQUA+player.getName()+": "+ChatColor.YELLOW+entry.getValue());
-            index++;
+        ResultSet rs = plugin.getPlaytimeManager().getTopPlaytimes();
+        try {
+            while (rs.next()) {
+                if(index > 9) break;
+                OfflinePlayer player = plugin.getServer().getOfflinePlayer(UUID.fromString(rs.getString("uuid")));
+                sender.sendMessage(ChatColor.GOLD+""+(index+1)+". "+ChatColor.AQUA+player.getName()+": "+ChatColor.YELLOW+formatTime(rs.getInt("playtime")));
+                index++;
+            }
+        } catch (SQLException e){
+            plugin.getLogger().severe("Error getting top playtimes");
         }
         if(index == 0){
             sender.sendMessage(ChatColor.RED+"No top playtime data available.");
         }
         return true;
+    }
+
+    private String formatTime(int number){
+        int hours = number / 3600;
+        int minutes = (number % 3600) / 60;
+        int seconds = number % 60;
+        return hours + "h " + minutes + "m" + (seconds > 0 ? " " + seconds + "s" : "");
     }
 }
