@@ -20,7 +20,7 @@ public class SQLiteManager {
             String url = "jdbc:sqlite:%s/playtimes.db".formatted(plugin.getDataFolder().getAbsolutePath());
             connection = DriverManager.getConnection(url);
 
-            PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS playtimes (uuid TEXT PRIMARY KEY, playtime INTEGER);");
+            PreparedStatement ps = connection.prepareStatement("CREATE TABLE IF NOT EXISTS playtimes (uuid TEXT PRIMARY KEY, playtime INTEGER DEFAULT 0, timesjoined INTEGER DEFAULT 0);");
             ps.execute();
 
             Statement statement = connection.createStatement();
@@ -35,7 +35,7 @@ public class SQLiteManager {
             rs.close();
 
             if(!columnExists) {
-                PreparedStatement tablePS = connection.prepareStatement("ALTER TABLE playtimes ADD COLUMN timesjoined INTEGER;");
+                PreparedStatement tablePS = connection.prepareStatement("ALTER TABLE playtimes ADD COLUMN timesjoined INTEGER DEFAULT 0;");
                 tablePS.execute();
             }
 

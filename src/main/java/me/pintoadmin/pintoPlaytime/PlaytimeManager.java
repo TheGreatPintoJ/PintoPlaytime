@@ -143,7 +143,7 @@ public class PlaytimeManager {
 
         try {
             PreparedStatement ps = plugin.getSqLiteManager().getConnection()
-                    .prepareStatement("SELECT timesjoined FROM playtimes WHERE uuid = ?");
+                    .prepareStatement("SELECT timesjoined FROM playtimes WHERE uuid = ?;");
             ps.setString(1, offlinePlayer.getUniqueId().toString());
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
@@ -162,7 +162,7 @@ public class PlaytimeManager {
         try {
             Connection conn = plugin.getSqLiteManager().getConnection();
 
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM playtimes");
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM playtimes ORDER BY playtime DESC;");
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
                 finalMap.put(rs.getString("uuid"), formatTime(rs.getInt("playtime")));
