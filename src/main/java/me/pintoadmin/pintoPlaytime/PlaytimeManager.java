@@ -28,6 +28,7 @@ public class PlaytimeManager {
                     case 'm' -> milestoneTime = milestoneValue * 60;
                     case 'h' -> milestoneTime = milestoneValue * 3600;
                     case 'd' -> milestoneTime = milestoneValue * 86400;
+                    default -> milestoneTime = milestoneValue;
                 }
 
                 if (playtime >= milestoneTime) {
@@ -88,6 +89,7 @@ public class PlaytimeManager {
                                         }
                                     }
                                 }
+                                //plugin.getLogger().info("Given player permission for milestone: "+entry);
                             }
                         }
                     }
